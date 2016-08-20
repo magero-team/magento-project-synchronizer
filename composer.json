@@ -1,0 +1,24 @@
+{
+    "name": "magero/magento-project-synchronizer",
+    "description": "Synchronizer for Magento extensions",
+    "keywords": ["Magento", "extensions"],
+    "homepage": "https://docs.magero.pw/",
+    "type": "magento-develop-tool",
+    "require": {
+        "symfony/console": "^3.1",
+        "symfony/finder": "^3.1",
+        "symfony/filesystem": "^3.1"
+    },
+    "authors": [
+        {
+            "name": "VVeb Developer",
+            "email": "developer@vveb.pro"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Magero\\Project\\Synchronizer\\": "src/Synchronizer/"
+        }
+    },
+    "bin": ["bin/synchronizer"]
+}
