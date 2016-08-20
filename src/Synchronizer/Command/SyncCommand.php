@@ -23,14 +23,16 @@ class SyncCommand extends BaseCommand
 
         $this->addArgument(
             self::ARGUMENT_PROJECT_DIRECTORY,
-            Input\InputArgument::REQUIRED,
-            'The project directory files will be read from'
+            Input\InputArgument::OPTIONAL,
+            'The project directory files will be read from',
+            './project'
         );
 
         $this->addArgument(
             self::ARGUMENT_MAGENTO_DIRECTORY,
-            Input\InputArgument::REQUIRED,
-            'Magento instance directory the project files will be placed where'
+            Input\InputArgument::OPTIONAL,
+            'Magento instance directory the project files will be placed where',
+            './magento'
         );
 
         $this->addOption(
