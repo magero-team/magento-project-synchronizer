@@ -101,6 +101,7 @@ class SyncCommand extends BaseCommand
                     unset($cacheState['files'][$fileRelativePathname]);
                 }
             }
+            arsort($cacheState['directories']);
             foreach (array_keys($cacheState['directories']) as $directoryRelativePathname) {
                 $targetDir = $targetDirectory . DIRECTORY_SEPARATOR . $directoryRelativePathname;
                 if (!is_dir($sourceDirectory . DIRECTORY_SEPARATOR . $directoryRelativePathname) &&
