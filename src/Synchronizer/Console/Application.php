@@ -9,18 +9,28 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Filesystem;
 use Magero\Project\Synchronizer\Command;
 
+/**
+ * Class Application
+ * @package Magero\Project\Synchronizer\Console
+ */
 class Application extends BaseApplication
 {
     const VERSION = '1.0.0';
 
-    /** @var   */
+    /** @var string */
     private $cacheDirectory;
 
+    /**
+     * Application constructor
+     */
     public function __construct()
     {
         parent::__construct('Magero Project Synchronizer', self::VERSION);
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function getDefaultCommands()
     {
         $commands = array_merge(
@@ -33,16 +43,24 @@ class Application extends BaseApplication
         return $commands;
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function getDefaultInputDefinition()
     {
         $definition = parent::getDefaultInputDefinition();
-        $definition->addOption(new InputOption('--cache-dir', '-c', InputOption::VALUE_REQUIRED, 'If specified, use the given directory as cache directory'));
+        $definition->addOption(new InputOption(
+            '--cache-dir',
+            '-c',
+            InputOption::VALUE_REQUIRED,
+            'If specified, use the given directory as cache directory'
+        ));
 
         return $definition;
     }
 
     /**
-     * @param $sourceDirectory
+     * @param string $sourceDirectory
      * @param InputInterface $input
      * @return string
      */
@@ -57,10 +75,14 @@ class Application extends BaseApplication
             $fileSystem->mkdir($cacheDirectory);
         }
         if (!is_readable($cacheDirectory)) {
-            throw new Filesystem\Exception\IOException(sprintf('Cache directory "%s" is not readable', $cacheDirectory));
+            throw new Filesystem\Exception\IOException(
+                sprintf('Cache directory "%s" is not readable', $cacheDirectory)
+            );
         }
         if (!is_writable($cacheDirectory)) {
-            throw new Filesystem\Exception\IOException(sprintf('Cache directory "%s" is not writable', $cacheDirectory));
+            throw new Filesystem\Exception\IOException(
+                sprintf('Cache directory "%s" is not writable', $cacheDirectory)
+            );
         }
 
         $this->cacheDirectory = realpath($cacheDirectory);

@@ -8,6 +8,10 @@ use Symfony\Component\Console\Output;
 use Symfony\Component\Finder;
 use Symfony\Component\Filesystem;
 
+/**
+ * Class SyncCommand
+ * @package Magero\Project\Synchronizer\Command
+ */
 class SyncCommand extends BaseCommand
 {
     CONST ARGUMENT_PROJECT_DIRECTORY = 'project_directory';
@@ -50,19 +54,27 @@ class SyncCommand extends BaseCommand
     {
         $sourceDirectory = $input->getArgument(self::ARGUMENT_PROJECT_DIRECTORY);
         if (!is_dir($sourceDirectory)) {
-            throw new Exception\InvalidArgumentException(sprintf('Project directory "%s" does not exist', $sourceDirectory));
+            throw new Exception\InvalidArgumentException(
+                sprintf('Project directory "%s" does not exist', $sourceDirectory)
+            );
         }
         if (!is_readable($sourceDirectory)) {
-            throw new Filesystem\Exception\IOException(sprintf('Project directory "%s" is not readable', $sourceDirectory));
+            throw new Filesystem\Exception\IOException(
+                sprintf('Project directory "%s" is not readable', $sourceDirectory)
+            );
         }
         $sourceDirectory = realpath($sourceDirectory);
 
         $targetDirectory = $input->getArgument(self::ARGUMENT_MAGENTO_DIRECTORY);
         if (!is_dir($targetDirectory)) {
-            throw new Exception\InvalidArgumentException(sprintf('Magento directory "%s" does not exist', $targetDirectory));
+            throw new Exception\InvalidArgumentException(
+                sprintf('Magento directory "%s" does not exist', $targetDirectory)
+            );
         }
         if (!is_writable($targetDirectory)) {
-            throw new Filesystem\Exception\IOException(sprintf('Magento directory "%s" is not writable', $targetDirectory));
+            throw new Filesystem\Exception\IOException(
+                sprintf('Magento directory "%s" is not writable', $targetDirectory)
+            );
         }
         $targetDirectory = realpath($targetDirectory);
 
