@@ -23,7 +23,7 @@ use Magero\Project\Synchronizer\Command;
  */
 class Application extends BaseApplication
 {
-    const VERSION = '1.0.0';
+    const VERSION = '1.0.1';
 
     /** @var string */
     private $cacheDirectory;
