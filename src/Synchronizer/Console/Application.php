@@ -1,4 +1,12 @@
 <?php
+/**
+ *  This file is part of the Magento Project Synchronizer.
+ *
+ *  (c) Magero team <support@magero.pw>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ */
 
 namespace Magero\Project\Synchronizer\Console;
 
@@ -15,7 +23,7 @@ use Magero\Project\Synchronizer\Command;
  */
 class Application extends BaseApplication
 {
-    const VERSION = '1.0.0';
+    const VERSION = '1.0.1';
 
     /** @var string */
     private $cacheDirectory;
