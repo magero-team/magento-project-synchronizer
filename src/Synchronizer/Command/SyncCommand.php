@@ -25,6 +25,13 @@ class SyncCommand extends BaseCommand
     CONST ARGUMENT_PROJECT_DIRECTORY = 'project_directory';
     CONST ARGUMENT_MAGENTO_DIRECTORY = 'magento_directory';
     CONST OPTION_GROUP = 'group';
+    CONST OPTION_SYNC_TYPE_LINKS = 'links';
+
+    const SYNC_TYPE_FILES = 'files';
+    const SYNC_TYPE_LINKS = 'links';
+
+    /** @var string */
+    private $syncType = self::SYNC_TYPE_FILES;
 
     /**
      * @inheritdoc
@@ -52,6 +59,13 @@ class SyncCommand extends BaseCommand
             'g',
             Input\InputOption::VALUE_OPTIONAL,
             'The group ownership of synced files/directories'
+        );
+
+        $this->addOption(
+            self::OPTION_SYNC_TYPE_LINKS,
+            'l',
+            Input\InputOption::VALUE_NONE,
+            'If specified, use the symlinks instead of direct copying for project files'
         );
     }
 
@@ -86,6 +100,10 @@ class SyncCommand extends BaseCommand
         }
         $targetDirectory = realpath($targetDirectory);
 
+        if ($input->getOption(self::OPTION_SYNC_TYPE_LINKS)) {
+            $this->syncType = self::SYNC_TYPE_LINKS;
+        }
+
         $this->getApplication()->configureCacheDirectory($sourceDirectory, $input);
 
         $directories = Finder\Finder::create()->directories()->in($sourceDirectory);
@@ -112,14 +130,9 @@ class SyncCommand extends BaseCommand
             foreach (array_keys($cacheState['files']) as $fileRelativePathname) {
                 $targetFile = $targetDirectory . DIRECTORY_SEPARATOR . $fileRelativePathname;
                 if (!file_exists($sourceDirectory . DIRECTORY_SEPARATOR . $fileRelativePathname) &&
-                    file_exists($targetFile)
+                    (file_exists($targetFile) || is_link($targetFile))
                 ) {
-                    if (!@unlink($targetFile) && file_exists($targetFile)) {
-                        $error = error_get_last();
-                        throw new Exception\RuntimeException(
-                            sprintf('Failed to remove file "%s": %s.', $targetFile, $error['message'])
-                        );
-                    }
+                    $this->fileSystem->remove($targetFile);
                     unset($cacheState['files'][$fileRelativePathname]);
                 }
             }
@@ -155,9 +168,9 @@ class SyncCommand extends BaseCommand
         foreach ($currentState['files'] as $fileRelativePathname) {
             $sourceFile = $sourceDirectory . DIRECTORY_SEPARATOR . $fileRelativePathname;
             $targetFile = $targetDirectory . DIRECTORY_SEPARATOR . $fileRelativePathname;
-            if (!file_exists($targetFile) || (md5_file($sourceFile) !== md5_file($targetFile))) {
-                $this->fileSystem->copy($sourceFile, $targetFile, true);
-            }
+
+            $this->copyFile($sourceFile, $targetFile);
+
             if ($ownershipGroup) {
                 $this->tryChangeGroup($targetFile, $ownershipGroup);
             }
@@ -166,6 +179,37 @@ class SyncCommand extends BaseCommand
         $this->getApplication()->writeToCache($sourceDirectory, $currentState);
 
         $output->writeln('Magento instance directory has been updated');
+    }
+
+    /**
+     * @param string $sourceFile
+     * @param string $targetFile
+     * @return $this
+     */
+    private function copyFile($sourceFile, $targetFile)
+    {
+        if (is_dir($targetFile)) {
+            $this->fileSystem->remove($targetFile);
+        }
+
+        switch ($this->syncType) {
+            case self::SYNC_TYPE_FILES:
+                if (is_link($targetFile)) {
+                    $this->fileSystem->remove($targetFile);
+                }
+                if (!file_exists($targetFile) || (md5_file($sourceFile) !== md5_file($targetFile))) {
+                    $this->fileSystem->copy($sourceFile, $targetFile, true);
+                }
+                break;
+            case self::SYNC_TYPE_LINKS:
+                if (is_file($targetFile)) {
+                    $this->fileSystem->remove($targetFile);
+                }
+                $this->fileSystem->symlink($sourceFile, $targetFile, true);
+                break;
+        }
+
+        return $this;
     }
 
     /**
