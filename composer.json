@@ -1,10 +1,9 @@
 {
-    "name": "magero/magento-project-synchronizer",
-    "description": "Synchronizer for Magento extensions",
-    "keywords": ["Magento", "extensions"],
-    "homepage": "https://docs.magero.pw/dev-tools/magento-project-synchronizer",
+    "name": "magero/project-synchronizer",
+    "description": "Synchronizer for CMS/eCommerce platform extensions",
+    "homepage": "https://docs.magero.pw/dev-tools/project-synchronizer",
     "license": "MIT",
-    "type": "magento-develop-tool",
+    "type": "develop-tool",
     "require": {
         "symfony/console": "^3.1",
         "symfony/finder": "^3.1",

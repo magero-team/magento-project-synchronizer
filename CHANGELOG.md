@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+1.1.1
+-----
+
+ * renamed project and minor changes
+
 1.1.0
 -----
 
