@@ -1,6 +1,6 @@
 <?php
 /**
- *  This file is part of the Magento Project Synchronizer.
+ *  This file is part of the Magero Project Synchronizer.
  *
  *  (c) Magero team <support@magero.pw>
  *

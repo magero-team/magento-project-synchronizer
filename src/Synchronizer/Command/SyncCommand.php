@@ -1,6 +1,6 @@
 <?php
 /**
- *  This file is part of the Magento Project Synchronizer.
+ *  This file is part of the Magero Project Synchronizer.
  *
  *  (c) Magero team <support@magero.pw>
  *
@@ -23,7 +23,7 @@ use Symfony\Component\Filesystem;
 class SyncCommand extends BaseCommand
 {
     CONST ARGUMENT_PROJECT_DIRECTORY = 'project_directory';
-    CONST ARGUMENT_MAGENTO_DIRECTORY = 'magento_directory';
+    CONST ARGUMENT_TARGET_DIRECTORY = 'target_directory';
     CONST OPTION_GROUP = 'group';
     CONST OPTION_SYNC_TYPE_LINKS = 'links';
 
@@ -38,20 +38,18 @@ class SyncCommand extends BaseCommand
      */
     protected function configure()
     {
-        $this->setDescription('Synchronize project files with files in Magento instance directory');
+        $this->setDescription('Synchronize project files with files in target instance directory');
 
         $this->addArgument(
             self::ARGUMENT_PROJECT_DIRECTORY,
-            Input\InputArgument::OPTIONAL,
-            'The project directory files will be read from',
-            './project'
+            Input\InputArgument::REQUIRED,
+            'The project directory files will be read from'
         );
 
         $this->addArgument(
-            self::ARGUMENT_MAGENTO_DIRECTORY,
-            Input\InputArgument::OPTIONAL,
-            'Magento instance directory the project files will be placed where',
-            './magento'
+            self::ARGUMENT_TARGET_DIRECTORY,
+            Input\InputArgument::REQUIRED,
+            'Target instance directory the project files will be placed where'
         );
 
         $this->addOption(
@@ -87,15 +85,15 @@ class SyncCommand extends BaseCommand
         }
         $sourceDirectory = realpath($sourceDirectory);
 
-        $targetDirectory = $input->getArgument(self::ARGUMENT_MAGENTO_DIRECTORY);
+        $targetDirectory = $input->getArgument(self::ARGUMENT_TARGET_DIRECTORY);
         if (!is_dir($targetDirectory)) {
             throw new Exception\InvalidArgumentException(
-                sprintf('Magento directory "%s" does not exist', $targetDirectory)
+                sprintf('Target instance directory "%s" does not exist', $targetDirectory)
             );
         }
         if (!is_writable($targetDirectory)) {
             throw new Filesystem\Exception\IOException(
-                sprintf('Magento directory "%s" is not writable', $targetDirectory)
+                sprintf('Target instance directory "%s" is not writable', $targetDirectory)
             );
         }
         $targetDirectory = realpath($targetDirectory);
@@ -178,7 +176,7 @@ class SyncCommand extends BaseCommand
 
         $this->getApplication()->writeToCache($sourceDirectory, $currentState);
 
-        $output->writeln('Magento instance directory has been updated');
+        $output->writeln('Directory "' . $targetDirectory . '" has been updated');
     }
 
     /**
